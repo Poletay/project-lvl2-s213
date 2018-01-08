@@ -3,34 +3,33 @@ import _ from 'lodash';
 const typesList = [
   {
     type: 'not changed',
-    check: (first, second, key) => (_.has(first, key) && _.has(second, key)
-      && (first[key] === second[key])),
-    getValue: first => _.identity(first),
+    check: (firstObj, secondObj, key) => firstObj[key] === secondObj[key],
+    getValue: firstValue => firstValue,
   },
   {
     type: 'changed',
-    check: (first, second, key) => (_.has(first, key) && _.has(second, key)
-      && (first[key] !== second[key])),
-    getValue: (first, second) => ({ old: first, new: second }),
+    check: (firstObj, secondObj, key) => (_.has(firstObj, key) && _.has(secondObj, key)
+      && (firstObj[key] !== secondObj[key])),
+    getValue: (firstValue, secondValue) => ({ old: firstValue, new: secondValue }),
   },
   {
     type: 'deleted',
-    check: (first, second, key) => (_.has(first, key) && !_.has(second, key)),
-    getValue: first => _.identity(first),
+    check: (firstObj, secondObj, key) => !_.has(secondObj, key),
+    getValue: firstValue => firstValue,
   },
   {
     type: 'inserted',
-    check: (first, second, key) => (!_.has(first, key) && _.has(second, key)),
-    getValue: (first, second) => _.identity(second),
+    check: (firstObj, secondObj, key) => !_.has(firstObj, key),
+    getValue: (firstValue, secondValue) => secondValue,
   },
 ];
 
-const mkDiff = (firstData, secondData) => {
-  const unionKeys = _.union(Object.keys(firstData), Object.keys(secondData));
+const mkDiff = (firstObj, secondObj) => {
+  const unionKeys = _.union(Object.keys(firstObj), Object.keys(secondObj));
 
   return unionKeys.map((key) => {
-    const { type, getValue } = _.find(typesList, item => item.check(firstData, secondData, key));
-    const value = getValue(firstData[key], secondData[key], mkDiff);
+    const { type, getValue } = _.find(typesList, item => item.check(firstObj, secondObj, key));
+    const value = getValue(firstObj[key], secondObj[key], mkDiff);
     return { name: key, type, value };
   });
 };

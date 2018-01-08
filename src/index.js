@@ -1,10 +1,13 @@
 import formatDiff from './formats';
-import getData from './parse';
-import mkdiff from './mkdiff';
+import parseData from './parsers';
+import getData from './sources';
+import makeDiff from './mkdiff';
 
 export default (firstSource, secondSource, format) => {
   const firstData = getData(firstSource);
   const secondData = getData(secondSource);
-  const diff = mkdiff(firstData, secondData);
+  const firstObj = parseData(firstData);
+  const secondObj = parseData(secondData);
+  const diff = makeDiff(firstObj, secondObj);
   return formatDiff(diff, format);
 };
