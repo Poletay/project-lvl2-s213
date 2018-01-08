@@ -2,6 +2,11 @@ import _ from 'lodash';
 
 const typesList = [
   {
+    type: 'nested',
+    check: (first, second, key) => _.isPlainObject(first[key]) && _.isPlainObject(second[key]),
+    getValue: (first, second, func) => func(first, second),
+  },
+  {
     type: 'not changed',
     check: (firstObj, secondObj, key) => firstObj[key] === secondObj[key],
     getValue: firstValue => firstValue,
