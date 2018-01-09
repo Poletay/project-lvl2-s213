@@ -7,4 +7,4 @@ const parsers = {
   '.ini': ini.parse,
 };
 
-export default source => parsers[source.type](source.value);
+export default (source, type) => parsers[type](source);
