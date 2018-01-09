@@ -4,28 +4,29 @@ const typesList = [
   {
     type: 'nested',
     check: (first, second, key) => _.isPlainObject(first[key]) && _.isPlainObject(second[key]),
-    getValue: (first, second, func) => func(first, second),
+    getParams: (first, second, func) => ({ children: func(first, second) }),
   },
   {
-    type: 'not changed',
-    check: (firstObj, secondObj, key) => firstObj[key] === secondObj[key],
-    getValue: firstValue => firstValue,
+    type: 'notchanged',
+    check: (firstObj, secondObj, key) =>
+      JSON.stringify(firstObj[key]) === JSON.stringify(secondObj[key]),
+    getParams: value => ({ value }),
   },
   {
     type: 'changed',
     check: (firstObj, secondObj, key) => (_.has(firstObj, key) && _.has(secondObj, key)
-      && (firstObj[key] !== secondObj[key])),
-    getValue: (firstValue, secondValue) => ({ old: firstValue, new: secondValue }),
+      && (JSON.stringify(firstObj[key]) !== JSON.stringify(secondObj[key]))),
+    getParams: (oldValue, newValue) => ({ oldValue, newValue }),
   },
   {
     type: 'deleted',
     check: (firstObj, secondObj, key) => !_.has(secondObj, key),
-    getValue: firstValue => firstValue,
+    getParams: oldValue => ({ oldValue }),
   },
   {
     type: 'inserted',
     check: (firstObj, secondObj, key) => !_.has(firstObj, key),
-    getValue: (firstValue, secondValue) => secondValue,
+    getParams: (oldValue, newValue) => ({ newValue }),
   },
 ];
 
@@ -33,9 +34,22 @@ const mkDiff = (firstObj, secondObj) => {
   const unionKeys = _.union(Object.keys(firstObj), Object.keys(secondObj));
 
   return unionKeys.map((key) => {
-    const { type, getValue } = _.find(typesList, item => item.check(firstObj, secondObj, key));
-    const value = getValue(firstObj[key], secondObj[key], mkDiff);
-    return { name: key, type, value };
+    const { type, getParams } = _.find(typesList, item => item.check(firstObj, secondObj, key));
+    const {
+      value,
+      oldValue,
+      newValue,
+      children,
+    } = getParams(firstObj[key], secondObj[key], mkDiff);
+
+    return {
+      name: key,
+      type,
+      value,
+      oldValue,
+      newValue,
+      children,
+    };
   });
 };
 

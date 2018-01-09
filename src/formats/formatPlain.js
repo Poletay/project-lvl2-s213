@@ -1,16 +1,16 @@
 import _ from 'lodash';
 
 const formatAdapters = {
-  nested: (node, path, func) => func(node.value, `${path}${node.name}.`),
-  'not changed': () => {},
+  nested: (node, path, formatAst) => formatAst(node.children, `${path}${node.name}.`),
+  notchanged: () => {},
   changed: (node, path) => {
-    const oldValue = _.isObject(node.value.old) ? 'complex value' : node.value.old;
-    const newValue = _.isObject(node.value.new) ? 'complex value' : node.value.new;
+    const oldValue = _.isObject(node.oldValue) ? 'complex value' : node.oldValue;
+    const newValue = _.isObject(node.newValue) ? 'complex value' : node.newValue;
     return `Property '${path}${node.name}' was updated From '${oldValue}' to '${newValue}'`;
   },
   deleted: (node, path) => `Property '${path}${node.name}' was removed`,
   inserted: (node, path) => {
-    const value = _.isPlainObject(node.value) ? 'complex value' : `value: '${node.value.toString()}'`;
+    const value = _.isPlainObject(node.newValue) ? 'complex value' : `value: '${node.newValue.toString()}'`;
     return `Property '${path}${node.name}' was added with ${value}`;
   },
 };

@@ -8,12 +8,12 @@ const marks = {
   gag: '  ',
 };
 
-const formatNode = (nodeValue, nodeName, marker, depth = 1) => {
+const formatNodeValue = (nodeValue, nodeName, marker, depth) => {
   const jump = oneStep.repeat(depth);
   if (_.isPlainObject(nodeValue)) {
     const formated = _.flatten(_.keys(nodeValue).map((key) => {
       if (_.isPlainObject(nodeValue[key])) {
-        return formatNode(nodeValue[key], depth + 1);
+        return formatNodeValue(nodeValue[key], depth + 1);
       }
       return `${jump}${oneStep}${marks.gag}${key}: ${nodeValue[key]}`;
     }));
@@ -22,30 +22,21 @@ const formatNode = (nodeValue, nodeName, marker, depth = 1) => {
   return [`${jump}${marker}${nodeName}: ${nodeValue}`];
 };
 
-const formatAdapters = {
-  nested: (node, depth, func) => func(node.value, node.name, depth),
-  deleted: (node, depth) => formatNode(node.value, node.name, marks.deleted, depth),
-  inserted: (node, depth) => formatNode(node.value, node.name, marks.inserted, depth),
-  'not changed': (node, depth) => formatNode(node.value, node.name, marks.notchanged, depth),
-  changed: (node, depth) => {
-    const before = formatNode(node.value.old, node.name, marks.deleted, depth);
-    const after = formatNode(node.value.new, node.name, marks.inserted, depth);
-    return _.flatten([after, before]);
-  },
-};
+const formatNode = (node, depth, formatAst) => _.flatten([
+  node.children ? formatAst(node.children, node.name, depth) : undefined,
+  node.value ? formatNodeValue(node.value, node.name, marks.notchanged, depth) : undefined,
+  node.newValue ? formatNodeValue(node.newValue, node.name, marks.inserted, depth) : undefined,
+  node.oldValue ? formatNodeValue(node.oldValue, node.name, marks.deleted, depth) : undefined,
+]);
 
-const formatAst = (astDiff, nodeName = '', depth = 0) => {
+const formatAst = (diff, nodeName = undefined, depth = 0) => {
   const jump = oneStep.repeat(depth);
   const name = nodeName ? `${nodeName}: ` : '';
   const start = `${jump}${marks.gag}${name}{`;
   const end = `${jump}${marks.gag}}`;
+  const rows = _.compact(_.flatten(diff.map(node => formatNode(node, depth + 1, formatAst))));
 
-  const arrayOfBlock = _.flatten(astDiff.map((node) => {
-    const stringify = formatAdapters[node.type];
-    return stringify(node, depth + 1, formatAst);
-  }));
-
-  return [start, ...arrayOfBlock, end].join('\n');
+  return [start, ...rows, end].join('\n');
 };
 
 export default formatAst;
