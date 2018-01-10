@@ -1,17 +1,19 @@
 import _ from 'lodash';
 
+const makeDescIfObject = (value, prefix = '', simpleStr = 'complex value') => (_.isObject(value) ? simpleStr : `${prefix}'${value}'`);
+
 const formatAdapters = {
   nested: (node, path, formatAst) => formatAst(node.children, `${path}${node.name}.`),
   notchanged: () => {},
   changed: (node, path) => {
-    const oldValue = _.isObject(node.oldValue) ? 'complex value' : node.oldValue;
-    const newValue = _.isObject(node.newValue) ? 'complex value' : node.newValue;
-    return `Property '${path}${node.name}' was updated From '${oldValue}' to '${newValue}'`;
+    const oldValue = makeDescIfObject(node.oldValue);
+    const newValue = makeDescIfObject(node.newValue);
+    return `Property '${path}${node.name}' was updated From ${oldValue} to ${newValue}`;
   },
   deleted: (node, path) => `Property '${path}${node.name}' was removed`,
-  inserted: (node, path) => {
-    const value = _.isPlainObject(node.newValue) ? 'complex value' : `value: '${node.newValue.toString()}'`;
-    return `Property '${path}${node.name}' was added with ${value}`;
+  added: (node, path) => {
+    const newValue = makeDescIfObject(node.newValue, 'value: ');
+    return `Property '${path}${node.name}' was added with ${newValue}`;
   },
 };
 

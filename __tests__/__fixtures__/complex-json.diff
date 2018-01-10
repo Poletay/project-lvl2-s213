@@ -1,0 +1,37 @@
+{
+	"common": {
+		"setting2": {
+			"status": "deleted",
+			"value": "200"
+		},
+		"setting6": {
+			"ops": {
+				"status": "inserted",
+				"value": "vops"
+			}
+		},
+		"setting4": {
+			"status": "inserted",
+			"value": "blah blah"
+		},
+		"setting5": {
+			"status": "inserted",
+			"value": "[Complex Value]"
+		}
+	},
+	"group1": {
+		"baz": {
+			"status": "changed",
+			"oldValue": "bas",
+			"newValue": "bars"
+		}
+	},
+	"group2": {
+		"status": "deleted",
+		"value": "[Complex Value]"
+	},
+	"group3": {
+		"status": "inserted",
+		"value": "[Complex Value]"
+	}
+}

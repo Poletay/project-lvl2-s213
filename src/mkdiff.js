@@ -10,7 +10,7 @@ const typesList = [
     type: 'notchanged',
     check: (firstObj, secondObj, key) =>
       JSON.stringify(firstObj[key]) === JSON.stringify(secondObj[key]),
-    getParams: value => ({ value }),
+    getParams: oldValue => ({ oldValue }),
   },
   {
     type: 'changed',
@@ -24,7 +24,7 @@ const typesList = [
     getParams: oldValue => ({ oldValue }),
   },
   {
-    type: 'inserted',
+    type: 'added',
     check: (firstObj, secondObj, key) => !_.has(firstObj, key),
     getParams: (oldValue, newValue) => ({ newValue }),
   },
@@ -35,20 +35,10 @@ const mkDiff = (firstObj, secondObj) => {
 
   return unionKeys.map((key) => {
     const { type, getParams } = _.find(typesList, item => item.check(firstObj, secondObj, key));
-    const {
-      value,
-      oldValue,
-      newValue,
-      children,
-    } = getParams(firstObj[key], secondObj[key], mkDiff);
+    const { oldValue, newValue, children } = getParams(firstObj[key], secondObj[key], mkDiff);
 
     return {
-      name: key,
-      type,
-      value,
-      oldValue,
-      newValue,
-      children,
+      name: key, type, oldValue, newValue, children,
     };
   });
 };

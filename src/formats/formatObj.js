@@ -2,18 +2,18 @@ import _ from 'lodash';
 
 const oneStep = '    ';
 const marks = {
-  inserted: '+ ',
+  added: '+ ',
   deleted: '- ',
   notchanged: '  ',
   gag: '  ',
 };
 
-const formatNodeValue = (nodeValue, nodeName, marker, depth) => {
+const formatNode = (nodeValue, nodeName, marker, depth) => {
   const jump = oneStep.repeat(depth);
   if (_.isPlainObject(nodeValue)) {
     const formated = _.flatten(_.keys(nodeValue).map((key) => {
       if (_.isPlainObject(nodeValue[key])) {
-        return formatNodeValue(nodeValue[key], depth + 1);
+        return formatNode(nodeValue[key], depth + 1);
       }
       return `${jump}${oneStep}${marks.gag}${key}: ${nodeValue[key]}`;
     }));
@@ -22,19 +22,24 @@ const formatNodeValue = (nodeValue, nodeName, marker, depth) => {
   return [`${jump}${marker}${nodeName}: ${nodeValue}`];
 };
 
-const formatNode = (node, depth, formatAst) => _.flatten([
-  node.children ? formatAst(node.children, node.name, depth) : undefined,
-  node.value ? formatNodeValue(node.value, node.name, marks.notchanged, depth) : undefined,
-  node.newValue ? formatNodeValue(node.newValue, node.name, marks.inserted, depth) : undefined,
-  node.oldValue ? formatNodeValue(node.oldValue, node.name, marks.deleted, depth) : undefined,
-]);
+const formatAdapters = {
+  nested: (node, depth, func) => func(node.children, node.name, depth),
+  deleted: (node, depth) => formatNode(node.oldValue, node.name, marks.deleted, depth),
+  added: (node, depth) => formatNode(node.newValue, node.name, marks.added, depth),
+  notchanged: (node, depth) => formatNode(node.oldValue, node.name, marks.notchanged, depth),
+  changed: (node, depth) => {
+    const before = formatNode(node.oldValue, node.name, marks.deleted, depth);
+    const after = formatNode(node.newValue, node.name, marks.added, depth);
+    return _.flatten([after, before]);
+  },
+};
 
 const formatAst = (diff, nodeName = undefined, depth = 0) => {
   const jump = oneStep.repeat(depth);
   const name = nodeName ? `${nodeName}: ` : '';
   const start = `${jump}${marks.gag}${name}{`;
   const end = `${jump}${marks.gag}}`;
-  const rows = _.compact(_.flatten(diff.map(node => formatNode(node, depth + 1, formatAst))));
+  const rows = _.flatten(diff.map(node => formatAdapters[node.type](node, depth + 1, formatAst)));
 
   return [start, ...rows, end].join('\n');
 };
