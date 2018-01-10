@@ -1,37 +1,53 @@
 {
-	"common": {
-		"setting2": {
-			"status": "deleted",
-			"value": "200"
-		},
-		"setting6": {
-			"ops": {
-				"status": "inserted",
-				"value": "vops"
-			}
-		},
-		"setting4": {
-			"status": "inserted",
-			"value": "blah blah"
-		},
-		"setting5": {
-			"status": "inserted",
-			"value": "[Complex Value]"
-		}
-	},
-	"group1": {
-		"baz": {
-			"status": "changed",
-			"oldValue": "bas",
-			"newValue": "bars"
-		}
-	},
-	"group2": {
-		"status": "deleted",
-		"value": "[Complex Value]"
-	},
-	"group3": {
-		"status": "inserted",
-		"value": "[Complex Value]"
-	}
+    "common": {
+        "setting1": {
+            "type": "notchanged",
+            "oldvalue": "Value 1"
+        },
+        "setting2": {
+            "type": "deleted",
+            "oldValue": "200"
+        },
+        "setting3": {
+            "type": "notchanged",
+            "oldvalue": "true"
+        },
+        "setting6": {
+            "key": {
+                "type": "notchanged",
+                "oldvalue": "value"
+            },
+            "ops": {
+                "type": "added",
+                "newValue": "vops"
+            }
+        },
+        "setting4": {
+            "type": "added",
+            "newValue": "blah blah"
+        },
+        "setting5": {
+            "type": "added",
+            "newValue": "[Complex Value]"
+        }
+    },
+    "group1": {
+        "baz": {
+            "type": "changed",
+            "oldValue": "bas",
+            "newValue": "bars"
+        },
+        "foo": {
+            "type": "notchanged",
+            "oldvalue": "bar"
+        }
+    },
+    "group2": {
+        "type": "deleted",
+        "oldValue": "[Complex Value]"
+    },
+    "group3": {
+        "type": "added",
+        "newValue": "[Complex Value]"
+    }
 }
