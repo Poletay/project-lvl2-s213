@@ -1,8 +1,8 @@
 {
   "name": "gendiff-poletay-2",
-  "version": "0.6.0",
+  "version": "0.6.4",
   "description": "lvl-02-project v2",
-  "main": "index.js",
+  "main": "dist/index.js",
   "scripts": {
     "test": "jest",
     "babel-node": "babel-node",
