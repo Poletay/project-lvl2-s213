@@ -3,9 +3,7 @@ const formatAdapters = {
   notchanged: node => ({ type: node.type, oldvalue: node.oldValue }),
   deleted: node => ({ type: node.type, oldValue: node.oldValue }),
   added: node => ({ type: node.type, newValue: node.newValue }),
-  changed: node => ({
-    type: node.type, oldValue: node.oldValue, newValue: node.newValue,
-  }),
+  changed: node => ({ type: node.type, oldValue: node.oldValue, newValue: node.newValue }),
 };
 
 
