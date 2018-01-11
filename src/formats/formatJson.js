@@ -1,14 +1,10 @@
-import _ from 'lodash';
-
-const valueToString = (value, simpleStr = '[Complex Value]') => (_.isObject(value) ? simpleStr : `${value}`);
-
 const formatAdapters = {
   nested: (node, func) => func(node.children),
-  notchanged: node => ({ type: node.type, oldvalue: valueToString(node.oldValue) }),
-  deleted: node => ({ type: node.type, oldValue: valueToString(node.oldValue) }),
-  added: node => ({ type: node.type, newValue: valueToString(node.newValue) }),
+  notchanged: node => ({ type: node.type, oldvalue: node.oldValue }),
+  deleted: node => ({ type: node.type, oldValue: node.oldValue }),
+  added: node => ({ type: node.type, newValue: node.newValue }),
   changed: node => ({
-    type: node.type, oldValue: valueToString(node.oldValue), newValue: valueToString(node.newValue),
+    type: node.type, oldValue: node.oldValue, newValue: node.newValue,
   }),
 };
 

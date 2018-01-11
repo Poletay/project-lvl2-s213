@@ -10,7 +10,7 @@
         },
         "setting3": {
             "type": "notchanged",
-            "oldvalue": "true"
+            "oldvalue": true
         },
         "setting6": {
             "key": {
@@ -28,7 +28,9 @@
         },
         "setting5": {
             "type": "added",
-            "newValue": "[Complex Value]"
+            "newValue": {
+                "key5": "value5"
+            }
         }
     },
     "group1": {
@@ -44,10 +46,14 @@
     },
     "group2": {
         "type": "deleted",
-        "oldValue": "[Complex Value]"
+        "oldValue": {
+            "abc": "12345"
+        }
     },
     "group3": {
         "type": "added",
-        "newValue": "[Complex Value]"
+        "newValue": {
+            "fee": "100500"
+        }
     }
 }
