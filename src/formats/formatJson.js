@@ -6,7 +6,6 @@ const formatAdapters = {
   changed: node => ({ type: node.type, oldValue: node.oldValue, newValue: node.newValue }),
 };
 
-
 const formatAst = (diff) => {
   const result = diff.reduce((acc, node) => {
     acc[node.name] = formatAdapters[node.type](node, formatAst);
